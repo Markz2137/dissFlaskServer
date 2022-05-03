@@ -1,0 +1,74 @@
+body{
+	font:15px/1.5 Arial, Helvetica,sans-serif;
+	padding: 0px;
+	background-color:#f4f3f3;
+}
+
+.container{
+	width:100%;
+	margin: auto;
+	overflow: hidden;
+}
+
+header{
+	background:#03A9F4;
+	border-bottom:#448AFF 3px solid;
+	height:120px;
+	width:100%;
+	padding-top:30px;
+
+}
+
+.main-header{
+			text-align:center;
+			background-color: blue;
+			height:100px;
+			width:100%;
+			margin:0px;
+		}
+#brandname{
+	margin-left: 20px;
+	float:left;
+	font-size:30px;
+	color: #fff;
+	margin: 10px;
+}
+
+.header h2{
+	text-align:center;
+	color:#fff;
+
+}
+
+.textAreaContainer{
+	text-align: center;
+	justify-content: center;
+}
+
+.textBox{
+	width: 50%;
+}
+
+.btn-info {
+	background-color: #03A9F4FF;
+	color: white;
+	height:40px;
+	width:100px;} /* Blue */
+.btn-info:hover {background: #0b7dda;}
+
+
+.resultsContainer{
+	text-align: center;
+	margin-top: 25px;
+	margin-left: 25%;
+	width: 50%;
+	background-color: lightgrey;
+}
+.results[data-status="Not Hate Speech"]:after{
+	content: "Not Hate Speech";
+	color: green;
+}
+.results[data-status="Hate Speech"]:after{
+	content: "Hate Speech";
+	color: red;
+}
