@@ -1,4 +1,5 @@
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template,jsonify
+from flask_cors import cross_origin, CORS
 import pandas as pd
 import pickle
 import matplotlib.pyplot as plt
@@ -27,6 +28,12 @@ nltk.download('omw-1.4')
 
 # Declare a Flask app
 app = Flask(__name__)
+CORS(app)
+
+# Unpickle classifier
+model = pickle.load(open("rf_class.pkl", 'rb'))
+vectorizer = pickle.load(open("tfidf.pkl", 'rb'))
+
 
 CONTRACTION_MAP = {
     "ain't": "is not",
@@ -267,13 +274,10 @@ def sentiment_analysis_array(tweets):
 
 
 @app.route('/', methods=['GET','POST'])
+@cross_origin(origins='*')
 def main():
 
     if request.method == "POST":
-
-        # Unpickle classifier
-        model = pickle.load(open("rf_class.pkl", 'rb'))
-        vectorizer = pickle.load(open("tfidf.pkl", 'rb'))
 
         # Get values through input bars
         text = request.form.get("text_input")
@@ -310,6 +314,50 @@ def main():
         prediction = ""
 
     return render_template("demo.html", output=prediction)
+
+
+@app.route('/predict', methods=['POST'])
+@cross_origin(origins='*')
+def prediction():
+    if request.method == "POST":
+
+        # Get values through input bars
+        text = request.json["text"];
+
+        # Put inputs to dataframe
+        X = {'message': [text]}
+
+        X_df = pd.DataFrame(X)
+
+        X_text = X_df.message
+
+        X_preprocessed = pre_process(X_text)
+
+        X_vecorised = vectorizer.transform(X_preprocessed)
+
+        X_final = sentiment_analysis_array(X_text)
+
+        input = X_vecorised.toarray()
+
+        X_features = np.concatenate([input, X_final], axis=1)
+
+        final_X = pd.DataFrame(X_features)
+
+        final_X
+
+        # Get prediction
+        prediction = model.predict(final_X)
+
+        if prediction == 0:
+            prediction = "Not Hate Speech"
+        else: prediction = "Hate Speech"
+
+    else:
+        prediction = ""
+
+    response = jsonify(prediction)
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
 
 
 # Running the app
